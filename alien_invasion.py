@@ -13,7 +13,7 @@ class AlienInvasion:
         self.settings = Setting()        
 
         self.screen = pygame.display.set_mode((self.settings.screen_width,self.settings.screen_height))
-        pygame.display.get_caption("Alien Invasion")
+        pygame.display.set_caption("Alien Invasion")
         
         self.ship = Ship(self)
         
@@ -21,12 +21,42 @@ class AlienInvasion:
     def run_game(self):
         """Start the main loop for the game."""
         while True:
+
+            self._check_event()
+            self.ship.update()
+            self._update_screen()
             #Watch for keyboard and mous events.
+            #Redraw the screen during each pass through the loop.
+            
+    def _check_event(self):
+            """respond to keypresses and mouse events."""
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    self._check_keydown_events(event)
+                   
+                elif event.type == pygame.KEYUP:
+                        self._check_keyup_events(event)
+                        
+                        
+    def _check_keydown_events(self,event):
+         #respond to keypresses
+        if event.key == pygame.K_RIGHT:
+            self.ship.moving_right = True
+        elif event.key == pygame.K_LEFT:
+             self.ship.moving_left = True
+        elif event.key == pygame.k_q:
+             sys.exit()
 
-            #Redraw the screen during each pass through the loop.
+    def _check_keyup_events(self,event):
+        if event.key == pygame.K_RIGHT:
+            self.ship.moving_right = False
+        elif event.key == pygame.K_LEFT:
+            self.ship.moving_left = False
+    
+    def _update_screen(self):
+            """Update image on the screen, and flip to the new screen."""
             self.screen.fill(self.settings.bg_color)
             self.ship.blitme()
             #Make the most recently drawn screen events.
